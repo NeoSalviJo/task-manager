@@ -70,7 +70,10 @@ export function updateTask(id: string, dto: UpdateTaskDTO): Task | null {
   return tasks[index];
 }
 
+// Finished
 export function deleteTask(id: string): boolean {
-  // TODO: implement delete logic here
-  return false;
+  const index = tasks.findIndex((t) => t.id === id);
+  if (index === -1) return false;
+  tasks.splice(index, 1);
+  return true;
 }
