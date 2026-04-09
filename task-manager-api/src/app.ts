@@ -1,18 +1,13 @@
 import express from "express";
 import taskRoutes from "./routes/taskRoutes";
-import { errorHandler, notFound } from "./middleware/errorHandler";
+import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.json({ message: "Task Manager API is running" });
-});
-
 app.use("/api/tasks", taskRoutes);
 
-app.use(notFound);
+// ⚠️ Error handler MUST be registered last — after all routes
 app.use(errorHandler);
 
 export default app;

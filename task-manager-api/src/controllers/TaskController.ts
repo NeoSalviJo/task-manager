@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as TaskService from "../services/TaskService";
 import { CreateTaskDTO, UpdateTaskDTO } from "../types";
 
@@ -8,50 +8,70 @@ const queryStr = (val: unknown): string | undefined => {
   return undefined;
 };
 
-export function getAllTasks(req: Request, res: Response): void {
-  const status = queryStr(req.query.status);
-  const priority = queryStr(req.query.priority);
-  const assignee = queryStr(req.query.assignee);
+export function getAllTasks(req: Request, res: Response, next: NextFunction): void {
+  try {
+    const status = queryStr(req.query.status);
+    const priority = queryStr(req.query.priority);
+    const assignee = queryStr(req.query.assignee);
 
-  const tasks = TaskService.getAllTasks(status, priority, assignee);
-  res.status(200).json({ success: true, data: tasks, total: tasks.length });
+    const tasks = TaskService.getAllTasks(status, priority, assignee);
+    res.status(200).json({ success: true, data: tasks, total: tasks.length });
+  } catch (err) {
+    next(err);
+  }
 }
 
-export function getTaskById(req: Request, res: Response): void {
-  const task = TaskService.getTaskById(String(req.params.id));
+export function getTaskById(req: Request, res: Response, next: NextFunction): void {
+  try {
+    const task = TaskService.getTaskById(String(req.params.id));
 
-  if (!task) {
-    res.status(404).json({ success: false, error: "Task not found" });
-    return;
+    if (!task) {
+      res.status(404).json({ success: false, error: "Task not found" });
+      return;
+    }
+
+    res.status(200).json({ success: true, data: task });
+  } catch (err) {
+    next(err);
   }
-
-  res.status(200).json({ success: true, data: task });
 }
 
-export function createTask(req: Request, res: Response): void {
-  const task = TaskService.createTask(req.body);
-  res.status(201).json({ success: true, data: task });
-} // changes to this
-
-export function updateTask(req: Request, res: Response): void {
-  const body: UpdateTaskDTO = req.body;
-  const updated = TaskService.updateTask(String(req.params.id), body);
-
-  if (!updated) {
-    res.status(404).json({ success: false, error: "Task not found" });
-    return;
+export function createTask(req: Request, res: Response, next: NextFunction): void {
+  try {
+    const task = TaskService.createTask(req.body);
+    res.status(201).json({ success: true, data: task });
+  } catch (err) {
+    next(err);
   }
-
-  res.status(200).json({ success: true, data: updated });
 }
 
-export function deleteTask(req: Request, res: Response): void {
-  const deleted = TaskService.deleteTask(String(req.params.id));
+export function updateTask(req: Request, res: Response, next: NextFunction): void {
+  try {
+    const body: UpdateTaskDTO = req.body;
+    const updated = TaskService.updateTask(String(req.params.id), body);
 
-  if (!deleted) {
-    res.status(404).json({ success: false, error: "Task not found" });
-    return;
+    if (!updated) {
+      res.status(404).json({ success: false, error: "Task not found" });
+      return;
+    }
+
+    res.status(200).json({ success: true, data: updated });
+  } catch (err) {
+    next(err);
   }
+}
 
-  res.status(200).json({ success: true, message: "Task deleted successfully" });
+export function deleteTask(req: Request, res: Response, next: NextFunction): void {
+  try {
+    const deleted = TaskService.deleteTask(String(req.params.id));
+
+    if (!deleted) {
+      res.status(404).json({ success: false, error: "Task not found" });
+      return;
+    }
+
+    res.status(200).json({ success: true, message: "Task deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
 }
