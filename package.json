@@ -2,5 +2,8 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/uuid": "^11.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
   }
 }

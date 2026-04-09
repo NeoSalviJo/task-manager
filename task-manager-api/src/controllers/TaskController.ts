@@ -29,16 +29,9 @@ export function getTaskById(req: Request, res: Response): void {
 }
 
 export function createTask(req: Request, res: Response): void {
-  const body: CreateTaskDTO = req.body;
-
-  if (!body.title || !body.description) {
-    res.status(400).json({ success: false, error: "Title and description are required" });
-    return;
-  }
-
-  const task = TaskService.createTask(body);
+  const task = TaskService.createTask(req.body);
   res.status(201).json({ success: true, data: task });
-}
+} // changes to this
 
 export function updateTask(req: Request, res: Response): void {
   const body: UpdateTaskDTO = req.body;
